@@ -1,7 +1,11 @@
 import java.awt.List;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Scanner;
+
+import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
 public class postMasterUtils {
 
@@ -28,7 +32,7 @@ public class postMasterUtils {
 			routeOptions(conn,empId);
 			break;
 		case 3:
-			//scheduleOptions(conn);
+			scheduleOptions(conn,empId);
 			break;
 		case 4:
 			//empOptions(conn);
@@ -69,18 +73,18 @@ public class postMasterUtils {
 			break;
 			
 		case 2: // method call to view route
-			addPostalCode(empId);
+			addPostal(empId,conn);
 			break; 
 		case 3: // method call to view truck
-			removePostalCode(empId);
+			removePostal(empId,conn);
 			break;
 			
 		case 4: // method call to list mail
-			viewAverage(empId);
+			viewAverage(empId,conn);
 			break;
 			
 		case 5: // 
-			loginOptions(conn,empId);
+			//loginOptions(conn,empId);
 			break;	
 		}
 		
@@ -123,5 +127,106 @@ public class postMasterUtils {
 		}
 		
 	}
+	public static void removePostal(String empId, Connection conn){
+		Scanner read = new Scanner(System.in);
+		System.out.println("what route do yuo want to remove from");
+		String route_id = read.nextLine();
+		System.out.println("what postalcode do you want to remove from it");
+		String postalCode = read.nextLine();
+		
+		try{
+			String sql = "{call removeCodeFromRoute(?,?)}";
+			CallableStatement cstmt = conn.prepareCall(sql);
+			cstmt.setString(1, postalCode);
+			cstmt.setString(2, route_id);
+			cstmt.execute();
+			loginOptions(conn,empId);
+		}catch(SQLException | ClassNotFoundException e){
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static void viewAverage(String empId, Connection conn){
+		Scanner read = new Scanner(System.in);
+		System.out.println("What route do you want the average for");
+		String id = read.nextLine();
+		String sql = "{? = GetAverageRouteTime(?)}";
+		try {
+			CallableStatement cstmt = conn.prepareCall(sql);
+			cstmt.registerOutParameter(1, Types.NUMERIC);
+			cstmt.setString(2, id);
+			cstmt.execute();
+			System.out.println(cstmt.getInt(1));
+			loginOptions(conn, empId);
+		} catch (SQLException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static void scheduleOptions(Connection conn, String empId){
+		Scanner read = new Scanner(System.in);
+		System.out.println("What would you like to do?");
+		System.out.println("1-new schedule");
+		System.out.println("2-go back");
+		int choice = read.nextInt();
+		scheduleOptions(conn,choice,empId);
+	}
+	public static void scheduleOptions(Connection conn, int choice, String empId){
+		switch(choice){
+		case 1:
+			newSchedule(conn,empId);
+			break;
+		case 2:
+			try {
+				loginOptions(conn, empId);
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;
+			
+		}
+	}
+	public static void newSchedule(Connection conn, String empId){
+		Scanner read = new Scanner(System.in);
+		System.out.println("who do you want to be the carrier?");
+		String carrierid = read.nextLine();
+		System.out.println("Which vehicle will be scheduled for it");
+		String vID = read.nextLine();
+		System.out.println("what route is this schedule for");
+		String rID = read.nextLine();
+		System.out.println("when will it start");
+		String starttime = read.nextLine();
+		SimpleDateFormat df = new SimpleDateFormat("dd-mm-yyyy-hh-mm");
+		Date theStart = null;
+		try{
+			theStart = df.parse(starttime);
+		}catch (ParseException | java.text.ParseException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+		}
+		
+		try{
+			String sql = "{call newSchedule(?,?,?,?)";
+			CallableStatement cstmt = conn.prepareCall(sql);
+			cstmt.setString(1, carrierid);
+			cstmt.setString(2, vID);
+			cstmt.setString(3, rID);
+			cstmt.setDate(4, (java.sql.Date) theStart);
+			
+			cstmt.execute();
+			loginOptions(conn,empId);
+		}catch(SQLException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
 	
 }
+	
+

@@ -156,7 +156,6 @@ public class LogInUtils {
 				// call class for postmaster
 				postMasterUtils.loginOptions(conn, empId);
 				break;
-
 			}
 			empRs.close();
 
