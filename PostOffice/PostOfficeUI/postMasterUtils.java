@@ -35,13 +35,20 @@ public class postMasterUtils {
 			scheduleOptions(conn,empId);
 			break;
 		case 4:
-			//empOptions(conn);
+			empOptions(conn,empId);
 			break;
 		case 5:
 			//vehicleOptions(conn);
 			break;			
 		}
 	}
+	public static void empOptions(Connection conn,String empId) {
+		System.out.println("What do you want to do?");
+		System.out.println("Hire an employee");
+		System.out.println("Fire An Emplyee");
+		
+	}
+
 	public static void viewUnassigned(Connection conn,String empId){
 		
 		/*try{
@@ -53,7 +60,7 @@ public class postMasterUtils {
 		}*/
 		
 	}
-	public static void routeOptions(Connection conn,String empId){
+	public static void routeOptions(Connection conn,String empId) throws ClassNotFoundException, SQLException{
 		Scanner read = new Scanner(System.in);
 		System.out.println("What would you like to do?");
 		System.out.println("1-new route");
@@ -65,7 +72,7 @@ public class postMasterUtils {
 		routeOptions(conn,choice,empId);
 		
 	}
-	public static void routeOptions(Connection conn, int choice,String empId){
+	public static void routeOptions(Connection conn, int choice,String empId) throws ClassNotFoundException, SQLException{
 		
 		switch(choice) {
 		case 1:	// list schedule
@@ -84,7 +91,7 @@ public class postMasterUtils {
 			break;
 			
 		case 5: // 
-			//loginOptions(conn,empId);
+			loginOptions(conn,empId);
 			break;	
 		}
 		
@@ -226,6 +233,7 @@ public class postMasterUtils {
 		
 		
 	}
+	
 	
 }
 	
