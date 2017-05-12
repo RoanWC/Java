@@ -40,7 +40,7 @@ public class clerkUtils {
 			break;
 			
 		case 5:
-			ModifyPassword(conn, empId);
+			Utilities.ModifyPassword(conn, empId);
 			break;
 	
 		}
@@ -52,7 +52,8 @@ public class clerkUtils {
 		int weight = read.nextInt();
 		
 		System.out.println("Please enter the postage");
-		int postage = read.nextInt();
+		double postage = read.nextDouble();
+		read.nextLine();
 		
 		System.out.println("Please enter 1 if the mail is registered and 0 if it is not reistered");
 		String registered = read.nextLine();
@@ -85,7 +86,7 @@ public class clerkUtils {
 		String SQL = "{call addMail(?,?,?,?,?,?,?,?,?,?)}";
 		cstmt = conn.prepareCall(SQL);
 		cstmt.setInt(1, weight);
-		cstmt.setInt(2, postage);
+		cstmt.setDouble(2, postage);
 		cstmt.setString(3, registered);
 		cstmt.setString(4, deliveryAddress);
 		cstmt.setString(5, returnAddress);
@@ -146,12 +147,9 @@ public class clerkUtils {
 	
 
 	private static void ViewMail(Connection conn) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
-	private static void ModifyPassword(Connection conn, String empId) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 }

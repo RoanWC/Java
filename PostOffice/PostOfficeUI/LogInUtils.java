@@ -35,7 +35,7 @@ public class LogInUtils {
 		try {
 			Connection conn = null;
 			// storing info in text so the teacher can access database
-			conn = getConnection("A1537595", "database2");
+			conn = getConnection("A1010290", "password123");
 			if(conn != null){	
 						
 				String username = JOptionPane.showInputDialog("Welcome to your local post office!\nPlease enter your username\n");			
@@ -69,7 +69,8 @@ public class LogInUtils {
 					System.out.println("Log in failed! Incorrect username or password");
 			}
 		} catch (ClassNotFoundException | SQLException e) {
-			e.getMessage();
+			
+			e.printStackTrace();
 		} 
 	}	
 
@@ -194,7 +195,7 @@ public class LogInUtils {
 		} catch (SQLException e){
 			if(e.getMessage().equals("Exhausted Resultset"))
 				System.out.println("Cannot find username!");	
-			e.getMessage();
+			e.printStackTrace();
 		}		
 		return false;
 	}
@@ -228,18 +229,18 @@ public class LogInUtils {
 				break;
 
 			case "clerk" :	// call class for carrier 
-
+				clerkUtils.loginOptions(conn, empId);	
 				break;
 
 			case "postmaster" :
-				// call class for postmaster
+				postMasterUtils.loginOptions(conn, empId);	
 				break;
 
 			}
 			empRs.close();
 
 		} catch (SQLException e) {
-			e.getMessage();
+			e.printStackTrace();
 		}
 
 	}
