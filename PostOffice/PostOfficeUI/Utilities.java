@@ -2,7 +2,10 @@ import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
+import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
@@ -10,31 +13,69 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.swing.JOptionPane;
-
+/**
+ * This class holds all the utilities required by all the workers
+ * in the post office.
+ * @author Zahraa Horeibi
+ *
+ */
 public class Utilities {
 	private static SecureRandom random = new SecureRandom();
 	
-	/*public static void ModifyPassword(Connection conn, String username) throws ClassNotFoundException, SQLException {
+	/**
+	 * The following method modifies the password of the user.
+	 * The user picks the desired password.
+	 * @author Zahraa Horeibi
+	 * @param conn
+	 * @param userId
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
+	
+	public static void ModifyPassword(Connection conn, String userId) {
+		try {
+		// getting the username
+		String sql = "SELECT username FROM post_user WHERE user_id = '" + userId + "'" ;
+	
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		ResultSet rs = stmt.executeQuery();
+		rs.next();
+		String username = rs.getString("username");
+		
 		Scanner read = new Scanner(System.in);
+		// ask for current password to make sure nobody is  
+		// trying to mess with their account
 		System.out.println("Enter your current password: ");
 		String oldPassword = read.nextLine();
 		
+		String salt = null;
+		byte[] hashedPassword = null;
+
 		boolean logInSuccess = LogInUtils.login(conn, username, oldPassword);
 		
+		// if the current password is right, we allow them to enter a new one
 		if (logInSuccess){
 			String newPassword = JOptionPane.showInputDialog("Enter your new password: ");
-			// confirm password?
-			//String confirmPwd = JOptionPane.showInputDialog("Confirm your password: ");
-			String salt = getSalt();
-			byte[] hashedPassword = hash(newPassword, salt);
+
+			salt = getSalt();
+			hashedPassword = hash(newPassword, salt);
 			
-			// update table from here or call a procedure?
-		
-		
+		}
+			// updating their new password to the database using a procedure
+			CallableStatement cstmt = conn.prepareCall("{call ModifyPassword (?,?,?)}");
+			
+			cstmt.setString(1,  username);
+			cstmt.setBytes(2,  hashedPassword);
+			cstmt.setString(3,  salt);
+			cstmt.execute();
+			System.out.println("Password Changed!");
+			cstmt.close();					
+			
+		} catch (SQLException | ClassNotFoundException e) {
+			e.getMessage();
 		}
 		
-		
-	}*/
+	}
 	
 	//Helper Functions below:
 		//getConnection() - obtains a connection

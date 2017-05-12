@@ -2,9 +2,23 @@ import java.awt.List;
 import java.sql.*;
 import java.util.Calendar;
 import java.util.Scanner;
-
+/**
+ * The following class contains all the required methods 
+ * that will get the desired information for a carrier.
+ * @author Zahraa Horeibi
+ *
+ */
 public class CarrierUtils {
 
+	/**
+	 * Displays the options a carrier can take and sends their desired
+	 * option to the overwritten loginOptions method.
+	 * @author Zahraa Horeibi
+	 * @param conn
+	 * @param empId
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
 	public static void loginOptions(Connection conn, String empId) throws ClassNotFoundException, SQLException{
 
 		Scanner read = new Scanner(System.in);
@@ -14,15 +28,25 @@ public class CarrierUtils {
 						 + "\n3 - View your assigned truck."
 						 + "\n4 - View the list of mail you must deliver."
 						 + "\n5 - Mark a route as started."
-						 + "\n6 - Mark a mail as delivered or undelivered."
-						 + "\n7 - Mark yourself as sick."
-						 + "\n8 - Modify your password.");
+						 + "\n6 - Mark a route as completed. "
+						 + "\n7 - Mark a mail as delivered or undelivered."
+						 + "\n8 - Mark yourself as sick."
+						 + "\n9 - Modify your password.");
 		
 		int userChoice = read.nextInt();
 		loginOptions(conn, userChoice, empId);		
 
 	}
-	
+	/**
+	 * Calls the appropriate method based on the user choice which got 
+	 * passed by.
+	 * @author Zahraa Horeibi
+	 * @param conn
+	 * @param choice
+	 * @param empId
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
 	public static void loginOptions(Connection conn, int choice, String empId) throws ClassNotFoundException, SQLException {
 		switch(choice) {
 		case 1:	// list schedule
@@ -43,20 +67,26 @@ public class CarrierUtils {
 		case 5: // 
 			RouteStarted(conn, empId);
 			break;
-			
-		case 6: // 
+		case 6: 
+			RouteCompleted(conn, empId);
+		case 7: // 
 			MarkMail(conn);
 			break;
-		case 7:
+		case 8:
 			MarkSick(conn, empId);
 			break;
-		case 8:  // modify their password
-			//Utilities.ModifyPassword(conn, empId);
+		case 9:  // modify their password
+			Utilities.ModifyPassword(conn, empId);
 			break;
 	
 		}
 	}
-
+	/**
+	 * The following method lists the schedule of an employee.
+	 * @author Zahraa Horeibi
+	 * @param conn
+	 * @param empId
+	 */
 	public static void ListSchedule(Connection conn, String empId){
 		
 		try {
@@ -77,17 +107,23 @@ public class CarrierUtils {
 			stmt.close();
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.getMessage();
 		}
 		
 	}
 	
 	
-	
+	/**
+	 *  The following method lists a carrier's route based on the 
+	 *  desired schedule_id.
+	 *  @author Zahraa Horeibi
+	 * @param conn
+	 * @param empId
+	 */
 	public static void ViewRoute(Connection conn, String empId) {
 			
 		try {
+			// lists the schedule so user can pick a schedule id
 			ListSchedule(conn, empId);
 			Scanner read = new Scanner(System.in);
 			System.out.println("Please enter a schedule ID");
@@ -101,6 +137,7 @@ public class CarrierUtils {
 			ResultSet rs = stmt.executeQuery();
 			
 			System.out.println("List of postal codes:");
+			// listing postal codes in result set
 			while(rs.next()){
 				System.out.println("\t" + rs.getString("postal_code"));
 			}
@@ -108,13 +145,19 @@ public class CarrierUtils {
 			stmt.close();
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.getMessage();
 		}
 		
 		
 	}
 	
+	/**
+	 *  The following method allows a carrier to view their assigned truck
+	 *  based on their specified schedule id
+	 * @author Zahraa Horeibi
+	 * @param conn
+	 * @param empId
+	 */
 	public static void ViewTruck(Connection conn, String empId) {
 		try {
 			ListSchedule(conn, empId);
@@ -122,29 +165,34 @@ public class CarrierUtils {
 			System.out.println("Please enter a schedule ID");
 			String schId = read.nextLine();
 			
-			String viewTruckSQL = "{ call ViewTruck(?, ?, ?)}";
+			String viewTruckSQL = "{ call ViewTruck( ?, ?)}";
 			CallableStatement cstmt = conn.prepareCall(viewTruckSQL);
 			
-			cstmt.setString(1, empId);
-			cstmt.setString(2, schId);
-			cstmt.registerOutParameter(3, Types.VARCHAR);
+			cstmt.setString(1, schId);
+			cstmt.registerOutParameter(2, Types.VARCHAR);
 			
 				
 			cstmt.execute();
 			
-			String plate = cstmt.getString(3);
+			String plate = cstmt.getString(2);
 		
 			System.out.println("Truck plate:\t" + plate);
 			
 			cstmt.close();
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.getMessage();
 		}
 		
 	}
 	
+	/**
+	 * The following method allows a user to have a choice in the way 
+	 * they want to list the mail they have to deliver.
+	 * @author Zahraa Horeibi
+	 * @param conn
+	 * @param empId
+	 */
 	public static void ListMailToDeliv(Connection conn, String empId) {
 		Scanner read = new Scanner(System.in);
 		System.out.println("Please enter the number for the desired option:");
@@ -166,6 +214,12 @@ public class CarrierUtils {
 		}
 	}
 	
+	/**
+	 * The following method will list all the mails a carrier has to deliver.
+	 * @author Zahraa Horeibi
+	 * @param conn
+	 * @param empId
+	 */
 	public static void ListAllMail(Connection conn, String empId){
 		try {
 			ListSchedule(conn, empId);
@@ -195,11 +249,17 @@ public class CarrierUtils {
 			
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.getMessage();
 		}
 	}
 	
+	/**
+	 * The following method will list the mail based on the postal code
+	 * inputed by the carrier.
+	 * @author Zahraa Horeibi
+	 * @param conn
+	 * @param empId
+	 */
 	public static void ListMailPostalCode(Connection conn, String empId){
 		try {
 			ListSchedule(conn, empId);
@@ -237,11 +297,16 @@ public class CarrierUtils {
 			}
 						
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.getMessage();
 		}
 	}
-	
+	/**
+	 * The following method will list the mail based on the address
+	 * inputed by the carrier.
+	 * @author Zahraa Horeibi
+	 * @param conn
+	 * @param empId
+	 */
 	public static void ListMailAddress(Connection conn, String empId){
 		try {
 			ListSchedule(conn, empId);
@@ -274,7 +339,10 @@ public class CarrierUtils {
 			while(rs.next()){
 				System.out.println("Mail ID:\t" + rs.getString("mail_id"));
 				String reg = rs.getString("registered");
+				
 				String regMail = "";
+				// display what the data actually means to the user.
+				// basically, a string instead of a number
 				if(reg.equals("1"))
 					regMail = "Registered Mail";
 				else if (reg.equals("0"))
@@ -288,11 +356,16 @@ public class CarrierUtils {
 			}
 					
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.getMessage();
 		}
 	}
-	
+	/**
+	 * The following method will allow a carrier to mark their route 
+	 * as started based on the chosen route id
+	 * @author Zahraa Horeibi
+	 * @param conn
+	 * @param empId
+	 */
 	public static void RouteStarted(Connection conn, String empId){
 
 		try {
@@ -322,21 +395,77 @@ public class CarrierUtils {
 			java.sql.Date date = new java.sql.Date(today.getTimeInMillis());
 			
 			System.out.println(date);
-			CallableStatement cstmt = conn.prepareCall("{ call RouteStarted(?, ?)}");
+			CallableStatement cstmt = conn.prepareCall("{ call RouteStarted(?, ?, ?)}");
 			
 			cstmt.setString(1, routeId);
 			cstmt.setDate(2, date);
-	
+			cstmt.setString(3, schId);
+			
 			cstmt.execute();
 			cstmt.close();
 			
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.getMessage();
 		}
 	}
-	
+	/**
+	 * The following method will allow a carrier to mark their route 
+	 * as completed based on the chosen route id
+	 * @author Zahraa Horeibi
+	 * @param conn
+	 * @param empId
+	 */
+	public static void RouteCompleted(Connection conn, String empId){
+		try {
+			ListSchedule(conn, empId);
+			Scanner read = new Scanner(System.in);
+			System.out.println("Please enter a schedule ID");
+			String schId = read.nextLine();
+			
+			String sql = "SELECT route_id FROM schedule WHERE carrier_id = '" + empId 
+						+ "' AND schedule_id = '" + schId + "'";
+			
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			ResultSet rs = stmt.executeQuery();
+		    rs.next();
+		    String routeId = rs.getString("route_id");
+		    
+			Calendar today = Calendar.getInstance();
+			System.out.println("Enter day:");
+			int day = read.nextInt();
+			System.out.println("Enter month:");
+			int month = read.nextInt() - 1;
+			System.out.println("Enter year:");
+			int year = read.nextInt();
+			System.out.println("day:\t" + day + "\nmonth:\t" + month + "\nyear:\t" + year);
+			today.set(year, month, day);
+			System.out.println(today.getTime());
+			java.sql.Date date = new java.sql.Date(today.getTimeInMillis());
+			
+			System.out.println(date);
+			CallableStatement cstmt = conn.prepareCall("{ call RouteCompleted(?, ?, ?)}");
+			
+			cstmt.setString(1, routeId);
+			cstmt.setDate(2, date);
+			cstmt.setString(3, schId);
+			
+			cstmt.execute();
+			cstmt.close();
+			
+			// allows the carrier to mark the undelivered mails
+			MarkMail(conn);
+			
+		} catch (SQLException e) {
+			e.getMessage();
+		}
+	}
+	/**
+	 * The following method will mark a mail as either Delivered or 
+	 * Not Delivered based on what the carrier inputs.
+	 * @author Zahraa Horeibi
+	 * @param conn
+	 */
 	public static void MarkMail(Connection conn){
 		try {
 			Scanner read = new Scanner(System.in);
@@ -355,11 +484,18 @@ public class CarrierUtils {
 			cstmt.close();					
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.getMessage();
 		}
 	}
 	
+	/**
+	 * The following method will allow a carrier to mark themselves as 
+	 * sick on a specified day. When a user mark themselves as sick,
+	 * a trigger will automatically assign a new carrier to do the task.
+	 * @author Zahraa Horeibi
+	 * @param conn
+	 * @param empId
+	 */
 	public static void MarkSick(Connection conn, String empId){
 		try {
 			
@@ -382,8 +518,6 @@ public class CarrierUtils {
 				sqlDate = new java.sql.Date(today.getTimeInMillis());
 			}
 			
-			
-			
 			CallableStatement cstmt = conn.prepareCall("{ call MarkSick(?, ?)}");
 			
 			cstmt.setString(1, empId);
@@ -393,8 +527,7 @@ public class CarrierUtils {
 			cstmt.close();		
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.getMessage();
 		}
 	}
 }
