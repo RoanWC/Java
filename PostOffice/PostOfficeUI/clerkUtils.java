@@ -103,13 +103,45 @@ public class clerkUtils {
 		}
 	}
 
-	private static void Upgrade(Connection conn, String empId) {
-		// TODO Auto-generated method stub
+	private static void Upgrade(Connection conn, String empId) throws SQLException {
+		Scanner read = new Scanner(System.in);
+		System.out.println("Please enter the customer id to be upgraded to premium");
+		String custId = read.nextLine();
+		
+		CallableStatement cstmt = null;
+		try{
+			String SQL ="{call becomePremium(?)}";
+			cstmt = conn.prepareCall(SQL);
+			cstmt.setString(1, custId);
+			cstmt.execute();
+		}catch(SQLException e){
+			
+		}
+		finally{
+			cstmt.close();
+		}
 		
 	}
 
 	private static void Downgrade(Connection conn, String empId) {
-		// TODO Auto-generated method stub
+		Scanner read = new Scanner(System.in);
+		System.out.println("Please enter the customer id to be downgraded from premium");
+		String custId = read.nextLine();
+		
+		CallableStatement cstmt = null;
+		try{
+			String SQL ="{call removePremium(?)}";
+			cstmt = conn.prepareCall(SQL);
+			cstmt.setString(1, custId);
+			cstmt.execute();
+		}catch(SQLException e){
+			
+		}
+		finally{
+			cstmt.close();
+		}
+		
+	}
 		
 	}
 
