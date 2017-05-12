@@ -123,7 +123,7 @@ public class clerkUtils {
 		
 	}
 
-	private static void Downgrade(Connection conn, String empId) {
+	private static void Downgrade(Connection conn, String empId) throws SQLException {
 		Scanner read = new Scanner(System.in);
 		System.out.println("Please enter the customer id to be downgraded from premium");
 		String custId = read.nextLine();
@@ -143,7 +143,7 @@ public class clerkUtils {
 		
 	}
 		
-	}
+	
 
 	private static void ViewMail(Connection conn) {
 		// TODO Auto-generated method stub
