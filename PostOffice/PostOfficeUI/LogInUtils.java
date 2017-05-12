@@ -35,7 +35,7 @@ public class LogInUtils {
 		try {
 			Connection conn = null;
 			// storing info in text so the teacher can access database
-			conn = getConnection("A1537595", "database2");
+			conn = getConnection("A1010290", "password123");
 			if(conn != null){	
 						
 				String username = JOptionPane.showInputDialog("Welcome to your local post office!\nPlease enter your username\n");			
@@ -233,6 +233,7 @@ public class LogInUtils {
 
 			case "postmaster" :
 				// call class for postmaster
+				postMasterUtils.loginOptions(conn,empId);
 				break;
 
 			}

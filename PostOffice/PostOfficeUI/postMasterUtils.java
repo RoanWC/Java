@@ -42,10 +42,85 @@ public class postMasterUtils {
 			break;			
 		}
 	}
-	public static void empOptions(Connection conn,String empId) {
+	public static void empOptions(Connection conn,String empId) throws ClassNotFoundException, SQLException {
 		System.out.println("What do you want to do?");
-		System.out.println("Hire an employee");
-		System.out.println("Fire An Emplyee");
+		System.out.println("1-Hire an employee");
+		System.out.println("2-Fire An Emplyee");
+		System.out.println("3-Go back");
+		Scanner read = new Scanner(System.in);
+		int choice = read.nextInt();
+		empOptions(conn,empId,choice);
+		
+		
+	}
+
+	private static void empOptions(Connection conn, String empId, int choice) throws ClassNotFoundException, SQLException {
+		// TODO Auto-generated method stub
+		switch(choice){
+		case 1:
+			hireEmployee(conn,empId);
+			break;
+		case 2:
+			fireEmployee(conn,empId);
+			break;
+		case 3:
+			loginOptions(conn,empId);
+		}
+	}
+
+	private static void fireEmployee(Connection conn, String empId) {
+		Scanner read = new Scanner(System.in);
+		System.out.println("who do you want to fire");
+		String id = read.nextLine();
+		
+		try{
+			String sql = "{execute fireEmployee(?)";
+			CallableStatement cstmt = conn.prepareCall(sql);
+			cstmt.setString(1, id);
+			cstmt.execute();
+			loginOptions(conn,empId);
+		}catch(SQLException | ClassNotFoundException e){
+			e.printStackTrace();
+		}
+
+		
+	}
+
+	private static void hireEmployee(Connection conn, String empId) {
+		Scanner read = new Scanner(System.in);
+		System.out.println("What is the first name");
+		String fname = read.nextLine();
+		System.out.println("what is the last name");
+		String lname = read.nextLine();
+		System.out.println("What kind of employee");
+		String type = read.nextLine();
+		System.out.println("what is the phone number");
+		String phone = read.nextLine();
+		System.out.println("What is his salary");
+		Double salary = read.nextDouble();
+		read.nextLine();
+		System.out.println("What is his email");
+		String email = read.nextLine();
+		System.out.println("what is his password");
+		String pass = read.nextLine();
+		
+		try{
+			String sql = "{execute hireEmplyee(?,?,?,?,?,?)}";
+			CallableStatement cstmt = conn.prepareCall(sql);
+			cstmt.setString(1,fname);
+			cstmt.setString(2,lname);
+			cstmt.setString(3,type);
+			cstmt.setDouble(4,salary);
+			cstmt.setString(5,phone);
+			cstmt.setString(6, email);
+			
+			cstmt.execute();
+			
+			LogInUtils.newUser(conn, fname, pass);
+			loginOptions(conn,empId);
+		}catch(SQLException | ClassNotFoundException e){
+			e.printStackTrace();
+		}
 		
 	}
 
