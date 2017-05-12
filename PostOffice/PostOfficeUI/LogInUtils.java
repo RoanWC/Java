@@ -154,7 +154,7 @@ public class LogInUtils {
 
 			case "postmaster" :
 				// call class for postmaster
-				
+				postMasterUtils.loginOptions(conn, empId);
 				break;
 
 			}
