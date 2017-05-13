@@ -5,6 +5,13 @@ import java.util.Scanner;
 
 public class clerkUtils {
 
+	/**
+	 * @author Keylen Alleyne
+	 * @param conn
+	 * @param empId
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
 	public static void loginOptions(Connection conn, String empId) throws ClassNotFoundException, SQLException{
 
 		Scanner read = new Scanner(System.in);
@@ -21,6 +28,14 @@ public class clerkUtils {
 		loginOptions(conn, userChoice, empId);	
 	}
 	
+	/**
+	 * @author Keylen Alleyne
+	 * @param conn
+	 * @param choice
+	 * @param empId
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
 	public static void loginOptions(Connection conn, int choice, String empId) throws ClassNotFoundException, SQLException {
 		switch(choice) {
 		case 1:	// list schedule
@@ -46,6 +61,12 @@ public class clerkUtils {
 		}
 	}
 
+	/**
+	 * @author Keylen Alleyne
+	 * @param conn
+	 * @param empId
+	 * @throws SQLException
+	 */
 	private static void AddMail(Connection conn, String empId) throws SQLException {
 		Scanner read = new Scanner(System.in);
 		System.out.println("Please enter the weight of the mail");
@@ -106,6 +127,12 @@ public class clerkUtils {
 		}
 	}
 
+	/**
+	 * @author Keylen Alleyne
+	 * @param conn
+	 * @param empId
+	 * @throws SQLException
+	 */
 	private static void Upgrade(Connection conn, String empId) throws SQLException {
 		Scanner read = new Scanner(System.in);
 		System.out.println("Please enter the customer id to be upgraded to premium");
@@ -125,7 +152,13 @@ public class clerkUtils {
 		}
 		
 	}
-
+	
+	/**
+	 * @author Keylen Alleyne
+	 * @param conn
+	 * @param empId
+	 * @throws SQLException
+	 */
 	private static void Downgrade(Connection conn, String empId) throws SQLException {
 		Scanner read = new Scanner(System.in);
 		System.out.println("Please enter the customer id to be downgraded from premium");
@@ -147,7 +180,12 @@ public class clerkUtils {
 	}
 		
 	
-
+	/**
+	 * 
+	 * @author Keylen Alleyne
+	 * @param conn
+	 * @throws SQLException
+	 */
 	private static void ViewMail(Connection conn) throws SQLException {
 		String mailSql = "SELECT mail_id, name, pc.postal_code, delievry_address_id FROM mail m join address ad ON "
 				+"m.delievry_address_id = ad.address_id JOIN postal_code pc ON ad.postal_code = "
