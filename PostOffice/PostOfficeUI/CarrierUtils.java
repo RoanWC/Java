@@ -12,7 +12,7 @@ public class CarrierUtils {
 
 	/**
 	 * Displays the options a carrier can take and sends their desired
-	 * option to the overwritten loginOptions method.
+	 * option to the overloaded loginOptions method.
 	 * @author Zahraa Horeibi
 	 * @param conn
 	 * @param empId
