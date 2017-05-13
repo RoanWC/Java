@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class clerkUtils {
 
-	/**
+	/**The purpose of this method is to method is to log in
 	 * @author Keylen Alleyne
 	 * @param conn
 	 * @param empId
