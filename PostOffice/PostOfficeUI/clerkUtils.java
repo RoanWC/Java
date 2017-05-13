@@ -95,9 +95,11 @@ public class clerkUtils {
 		cstmt.setString(8, city);
 		cstmt.setString(9, country);
 		cstmt.setString(10, premium);
-		cstmt.execute();
+		cstmt.executeQuery();
 		
 		} catch(SQLException e){
+			e.getMessage();
+			e.printStackTrace();
 		}
 		finally{
 			cstmt.close();
@@ -116,7 +118,7 @@ public class clerkUtils {
 			cstmt.setString(1, custId);
 			cstmt.execute();
 		}catch(SQLException e){
-			
+			e.getMessage();
 		}
 		finally{
 			cstmt.close();
@@ -136,7 +138,7 @@ public class clerkUtils {
 			cstmt.setString(1, custId);
 			cstmt.execute();
 		}catch(SQLException e){
-			
+			e.getMessage();
 		}
 		finally{
 			cstmt.close();
@@ -146,9 +148,21 @@ public class clerkUtils {
 		
 	
 
-	private static void ViewMail(Connection conn) {
+	private static void ViewMail(Connection conn) throws SQLException {
+		String mailSql = "SELECT mail_id, name, pc.postal_code, delievry_address_id FROM mail m join address ad ON "
+				+"m.delievry_address_id = ad.address_id JOIN postal_code pc ON ad.postal_code = "
+				+"pc.postal_code JOIN route r ON r.route_id = pc.route_id"; 
 		
+		PreparedStatement stmt = conn.prepareStatement(mailSql);
+		ResultSet rs = stmt.executeQuery();
 		
+		System.out.println("Mail:\n");
+		while(rs.next()){
+			System.out.println("Mail Id:\t" + rs.getString("mail_id"));
+			System.out.println("Route:\t" + rs.getString("name"));
+			System.out.println("Postal Code:\t" + rs.getString("postal_code"));
+			System.out.println("Delievry Address:\t" + rs.getString("delievry_address_id") + "\n");
+		}
 	}
 
 	
